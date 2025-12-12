@@ -5,7 +5,8 @@
 
 
 import React, { Suspense } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+// FIX: Import `extend` from `@react-three/fiber` to register THREE elements.
+import { Canvas, useFrame, useThree, extend } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Environment } from './components/World/Environment';
 import { Player } from './components/World/Player';
@@ -13,6 +14,10 @@ import { LevelManager } from './components/World/LevelManager';
 import { Effects } from './components/World/Effects';
 import { HUD } from './components/UI/HUD';
 import { useStore } from './store';
+
+// FIX: Register all of THREE's elements with React Three Fiber.
+// This resolves TypeScript errors about missing properties like 'group', 'mesh', etc. on JSX.IntrinsicElements.
+extend(THREE);
 
 // Dynamic Camera Controller
 const CameraController = () => {

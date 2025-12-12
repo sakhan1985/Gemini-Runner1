@@ -5,7 +5,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { Heart, Zap, Trophy, MapPin, Diamond, Rocket, ArrowUpCircle, Shield, Activity, PlusCircle, Play } from 'lucide-react';
+import { Heart, Zap, Trophy, MapPin, Diamond, Rocket, ArrowUpCircle, Shield, Activity, PlusCircle, Play, Square } from 'lucide-react';
 import { useStore } from '../../store';
 import { GameStatus, GEMINI_COLORS, ShopItem, RUN_SPEED_BASE } from '../../types';
 import { audio } from '../System/Audio';
@@ -105,7 +105,7 @@ const ShopScreen: React.FC = () => {
 };
 
 export const HUD: React.FC = () => {
-  const { score, lives, maxLives, collectedLetters, status, level, restartGame, startGame, gemsCollected, distance, isImmortalityActive, speed } = useStore();
+  const { score, lives, maxLives, collectedLetters, status, level, restartGame, startGame, gemsCollected, distance, isImmortalityActive, speed, setStatus } = useStore();
   const target = ['G', 'E', 'M', 'I', 'N', 'I'];
 
   // Common container style
@@ -119,21 +119,49 @@ export const HUD: React.FC = () => {
       return (
           <div className="absolute inset-0 flex items-center justify-center z-[100] bg-black/80 backdrop-blur-sm p-4 pointer-events-auto">
               {/* Card Container */}
-              <div className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,255,255,0.2)] border border-white/10 animate-in zoom-in-95 duration-500">
+              <div className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,255,255,0.2)] border border-white/10 animate-in zoom-in-95 duration-500 bg-gray-900">
                 
-                {/* Image Container - Auto height to fit full image without cropping */}
-                <div className="relative w-full bg-gray-900">
+                 {/* Image Background */}
+                 <div className="absolute inset-0 bg-black">
                      <img 
                       src="https://www.gstatic.com/aistudio/starter-apps/gemini_runner/gemini_runner.png" 
-                      alt="Gemini Runner Cover" 
-                      className="w-full h-auto block"
+                      alt="AI Velocity Cover" 
+                      className="w-full h-full object-cover opacity-30"
                      />
-                     
-                     {/* Gradient Overlay for text readability */}
-                     <div className="absolute inset-0 bg-gradient-to-t from-[#050011] via-black/30 to-transparent"></div>
-                     
-                     {/* Content positioned at the bottom of the card */}
-                     <div className="absolute inset-0 flex flex-col justify-end items-center p-6 pb-8 text-center z-10">
+                     <div className="absolute inset-0 bg-gradient-to-t from-[#050011] via-black/50 to-black/50"></div>
+                 </div>
+                 
+                 {/* Content Container - Enforce min height for spacing */}
+                 <div className="relative z-10 flex flex-col h-full min-h-[500px] p-6 pb-8">
+                        
+                    {/* Centered Content */}
+                    <div className="flex-grow flex flex-col items-center justify-center space-y-8">
+                        {/* Title */}
+                        <div className="text-center transform -rotate-2">
+                             <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500 tracking-tighter italic transform -skew-x-12 drop-shadow-[0_0_30px_rgba(0,255,255,0.6)] font-cyber leading-none">
+                                AI
+                            </h1>
+                            <h1 className="text-5xl md:text-7xl font-black text-white tracking-tighter italic transform -skew-x-12 drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] font-cyber leading-none ml-8">
+                                VELOCITY
+                            </h1>
+                        </div>
+
+                        {/* Divider */}
+                        <div className="w-16 h-1 bg-white/20 rounded-full"></div>
+
+                        {/* Credits */}
+                        <div className="flex flex-col items-center space-y-2">
+                            <p className="text-white/60 font-bold text-xs md:text-sm tracking-[0.3em] font-mono shadow-black drop-shadow-md">
+                                DEVELOPED BY
+                            </p>
+                            <h2 className="text-white font-black text-2xl md:text-4xl tracking-widest drop-shadow-[0_0_15px_rgba(255,255,255,0.4)] font-cyber uppercase text-center leading-tight">
+                                SALEEM KHAN
+                            </h2>
+                        </div>
+                    </div>
+
+                    {/* Bottom Controls */}
+                    <div className="w-full mt-auto pt-8">
                         <button 
                           onClick={() => { audio.init(); startGame(); }}
                           className="w-full group relative px-6 py-4 bg-white/10 backdrop-blur-md border border-white/20 text-white font-black text-xl rounded-xl hover:bg-white/20 transition-all shadow-[0_0_20px_rgba(0,255,255,0.2)] hover:shadow-[0_0_30px_rgba(0,255,255,0.4)] hover:border-cyan-400 overflow-hidden"
@@ -144,11 +172,11 @@ export const HUD: React.FC = () => {
                             </span>
                         </button>
 
-                        <p className="text-cyan-400/60 text-[10px] md:text-xs font-mono mt-3 tracking-wider">
+                        <p className="text-cyan-400/60 text-[10px] md:text-xs font-mono mt-3 text-center tracking-wider">
                             [ ARROWS / SWIPE TO MOVE ]
                         </p>
-                     </div>
-                </div>
+                    </div>
+                 </div>
               </div>
           </div>
       );
@@ -240,13 +268,23 @@ export const HUD: React.FC = () => {
                 </div>
             </div>
             
-            <div className="flex space-x-1 md:space-x-2">
-                {[...Array(maxLives)].map((_, i) => (
-                    <Heart 
-                        key={i} 
-                        className={`w-6 h-6 md:w-8 md:h-8 ${i < lives ? 'text-pink-500 fill-pink-500' : 'text-gray-800 fill-gray-800'} drop-shadow-[0_0_5px_#ff0054]`} 
-                    />
-                ))}
+            <div className="flex flex-col items-end gap-3 pointer-events-auto">
+                <button 
+                    onClick={() => { setStatus(GameStatus.MENU); }}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-500/10 hover:bg-red-500/30 border border-red-500/50 rounded-lg text-red-100 font-bold tracking-wider backdrop-blur-sm transition-all group shadow-[0_0_15px_rgba(255,0,0,0.1)] hover:shadow-[0_0_25px_rgba(255,0,0,0.3)]"
+                >
+                    <Square className="w-4 h-4 fill-current" /> 
+                    <span className="text-sm">STOP</span>
+                </button>
+
+                <div className="flex space-x-1 md:space-x-2">
+                    {[...Array(maxLives)].map((_, i) => (
+                        <Heart 
+                            key={i} 
+                            className={`w-6 h-6 md:w-8 md:h-8 ${i < lives ? 'text-pink-500 fill-pink-500' : 'text-gray-800 fill-gray-800'} drop-shadow-[0_0_5px_#ff0054]`} 
+                        />
+                    ))}
+                </div>
             </div>
         </div>
         
